@@ -1,0 +1,44 @@
+---
+- name: Create Users
+  hosts: servers
+  become: true
+
+  vars:
+    users:
+      - name: user1
+        password: mypassword1
+        groups: "sudo"
+      - name: user2
+        password: mypassword2
+        groups: "developers"
+
+  tasks:
+    - name: Create users
+      user:
+        name: "{{ item.name }}"
+        password: "{{ item.password | password_hash('sha512') }}"
+        groups: "{{ item.groups }}"
+      loop: "{{ users }}"
+
+---
+- name: this playbook is used to create the playbook
+  become: false
+  hosts: all
+  vars:
+    user:  anji
+  tasks:
+  - name: creating john user
+    user:
+      name: "{{ user }}"
+
+---
+- name: this playbook is used to create the playbook
+  become: false
+  hosts: all
+  vars_files:
+    - userss.yml
+  tasks:
+  - name: creating john user
+    user:
+      name: "{{ user }}"
+

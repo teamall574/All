@@ -1,0 +1,7 @@
+users:
+  - name: anji
+    password: anji1234
+    groups: "sudo"
+  - name: sampi
+    password: sampi1234
+    groups: "developers"

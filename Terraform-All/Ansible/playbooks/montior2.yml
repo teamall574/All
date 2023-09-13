@@ -1,0 +1,52 @@
+- name: Monitor CPU and Disk Usage
+  hosts: your_target_host
+  gather_facts: false
+
+  vars:
+    email_recipient: anji159258@gmail.com
+    cpu_threshold: 70
+    disk_threshold: 80
+    disk_device: /dev/xvda1
+
+  tasks:
+    - name: Check CPU utilization
+      shell: "top -bn1 | grep 'Cpu(s)' | awk '{print $2 + $4}'"
+      register: cpu_output
+
+    - name: Check disk usage
+      shell: "df -h --output=pcent {{ disk_device }} | tail -n1 | tr -d ' ' | tr -d '%'"
+      register: disk_output
+
+    - name: Check memory usage
+      shell: "free -g | awk '/^Mem:/{print $4}'"
+      register: memory_output  
+
+    - name: Send email notification - CPU Utilization
+      mail:
+        host: localhost
+        port: 25
+        subject: "CPU Utilization Alert!"
+        to: "{{ email_recipient }}"
+        body: "CPU utilization is {{ cpu_output.stdout }}%"
+
+      when: cpu_output.stdout | int > cpu_threshold
+
+    - name: Send email notification - Disk Usage
+      mail:
+        host: localhost
+        port: 25
+        subject: "Disk Usage Alert!"
+        to: "{{ email_recipient }}"
+        body: "Disk {{ disk_device }} usage is {{ disk_output.stdout }}%"
+
+      when: disk_output.stdout | int > disk_threshold
+
+    - name: Send email notification - Memory Usage
+      mail:
+        host: localhost
+        port: 25
+        subject: "Memory Usage Alert!"
+        to: "{{ email_recipient }}"
+        body: "Free memory is less than 6GB"
+
+      when: memory_output.stdout | int < memory_threshold  

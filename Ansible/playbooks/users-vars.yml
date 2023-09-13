@@ -1,0 +1,14 @@
+---
+- name: Create Users
+  hosts: servers
+  become: true
+  vars_files:
+    - users.yml
+  tasks:
+    - name: Create users
+      user:
+        name: "{{ item.name }}"
+        password: "{{ item.password | password_hash('sha512') }}"
+        groups: "{{ item.groups }}"
+        create_home: yes  #it will create the user in home directory
+      with_items: "{{ users }}"

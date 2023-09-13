@@ -1,0 +1,51 @@
+---
+- name: install tomcat
+  hosts: all
+  become: true
+  tasks:
+  - name: install java in RedHat family
+    yum:
+      name: java
+      state: installed
+    when: ansible_os_family == "RedHat"
+  
+  - name: install java in ubuntu or Debian family
+    apt:
+      name: java
+      state: present
+
+  ##configure tomcat server
+  - name:  install tomcat server
+    get_url:
+      url: https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.78/bin/apache-tomcat-9.0.78.tar.gz
+      dest: /opt  #directory downloading
+  - name: untar apache tomcat
+    unarachive: 
+      src: /opt/apache-tomcat-9.0.78.tar.gz
+      dest: /opt
+      remote_src: yes
+  - name: add execution permission on startup.sh file
+    file:
+      path: /opt/apache-tomcat-9.0.78/bin/startup.sh
+      mode: 0777
+  - name: start the tomcat using shell
+    shell: nohup ./startup.sh 
+      args:
+        chdir: /opt/apache-tomcat-9.0.78/bin
+  - name: create the soft link 
+    file:
+      src: /opt/tomcat/bin/startup.sh/
+      dest: /usr/local/bin/tomcatup
+      state: link
+      force: yes
+  - name: create the soft link 
+    file:
+      src: /opt/tomcat/bin/shutdown.sh/
+      dest: /usr/local/bin/tomcatdown
+      state: link
+      force: yes
+  - name: start the server
+    shell: tomcatup 
+    args:
+      chdir: /usr/local/bin/
+      

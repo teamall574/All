@@ -1,0 +1,30 @@
+{
+    "_comment" : "Create a AWS AMI ith AMZ Linux 2018 with Java and Tomcat",
+    "_comment1" : "packer build -var \"aws_secret_key=foo\" template.json",
+    "_comment2" : "packer build -var-file packer-vars.json template.json",
+    "builders": [{
+      "access_key": "{{user `aws_access_key`}}",
+      "secret_key": "{{user `aws_secret_key`}}",
+      "type": "amazon-ebs",
+      "region": "{{user `region`}}",
+      "source_ami": "{{user `source_ami`}}",
+      "instance_type": "{{user `instance_type`}}",
+      "ssh_username": "ubuntu",
+      "ami_name": "DevOpsClass-B18-Build-{{isotime | clean_resource_name}}",
+      "vpc_id": "{{user `vpc_id`}}",
+      "subnet_id": "{{user `subnet_id`}}",
+      "tags": {
+        "Name": "DevOpsClass-B18-Build-{{isotime | clean_resource_name}}"
+      }
+    }],
+    "provisioners": [{
+        "type": "shell",
+        "script": "./scripts/install_tomcat.sh"
+      },{
+        "type": "shell",
+        "script": "./scripts/deploy_app.sh"
+      },{
+        "type": "shell",
+        "script": "./scripts/configure_tomcat.sh"
+    }]
+}      

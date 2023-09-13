@@ -1,0 +1,45 @@
+{
+    "builders": [
+      {
+        "type": "amazon-ebs",
+        "access_key": "YOUR_ACCESS_KEY",
+        "secret_key": "YOUR_SECRET_KEY",
+        "region": "us-east-1",
+        "source_ami_filter": {
+          "filters": {
+            "virtualization-type": "hvm",
+            "name": "ubuntu/images/*ubuntu-bionic-18.04-amd64-server-*",
+            "root-device-type": "ebs"
+          },
+          "most_recent": true
+        },
+        "instance_type": "t2.micro",
+        "ssh_username": "ubuntu",
+        "ami_name": "nginx-ami-{{ timestamp }}"
+      }
+    ],
+    "provisioners": [
+      {
+        "type": "shell",
+        "script": "install_nginx.sh"
+      }
+    ],
+    provisioner "file" {
+      source      = "/path/to/your/local/file"
+      destination = "/home/ec2-user/bin/anji-web.conf"
+      connection {
+        type        = "ssh"
+        user        = "ec2-user"  # The default user for Amazon Linux
+        private_key = file("/path/to/your/private_key.pem")
+        host        = aws_instance.example.public_ip
+      }
+    },
+    provisioner "remote-exec" {
+        inline = [
+        "sleep 60",
+        "rm -rf /etc/nginx/conf.d/default.conf
+        "COPY /home/ec-user/bin/anji-web.conf /etc/nginx/conf.d/anji-web.conf"  
+        ]
+    }
+  }
+  

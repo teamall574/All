@@ -1,0 +1,42 @@
+---
+- name: Execute anji.sh script
+  hosts: remote_servers
+  become: true
+
+  tasks:
+    - name: Copy anji.sh to remote server
+      copy:
+        src: /path/to/local/login.sh
+        dest: /path/to/remote/login.sh
+        mode: '0755'  # Set the appropriate permissions (executable)
+
+    - name: Execute anji.sh script
+      script: /path/to/remote/login.sh
+
+##or use this 
+---
+- name: Get Last Login Details and Send Email
+  hosts: remote_servers
+  become: true
+
+  tasks:
+    - name: Execute 'last' command
+      command: last > /tmp/last_login_details.txt
+
+    - name: Gather last login details
+      fetch:
+        src: /tmp/last_login_details.txt
+        dest: /path/to/local/folder
+
+    - name: Send email
+      mail:
+        host: smtp.gmail.com
+        port: 587
+        username: your_gmail_account@gmail.com
+        password: your_gmail_account_password
+        to: anji159258@gmail.com
+        subject: "Last Login Details for {{ ansible_date_time.iso8601 }}"
+        body: |
+          Last Login Details for {{ ansible_date_time.iso8601 }}:
+
+          {{ lookup('file', '/path/to/local/folder/last_login_details.txt') }}

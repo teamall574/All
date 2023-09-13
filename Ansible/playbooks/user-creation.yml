@@ -1,0 +1,39 @@
+---
+- name: create a users
+  hosts: all
+  become: true
+  tasks:
+  - user: name=anji  ##it is used to create the user
+
+---  
+- name: Create Users with Passwords
+  hosts: your_target_hosts
+  gather_facts: false
+
+  vars:
+    users:
+      - name: user1
+        password: "{{ user1_password }}"
+        groups: group1, group2
+        shell: /bin/bash
+        create_home: yes
+
+      - name: user2
+        password: "{{ user2_password }}"
+        groups: group1
+        shell: /bin/bash
+        create_home: yes
+
+  tasks:
+    - name: Create users
+      user:
+        name: "{{ item.name }}"
+        password: "{{ item.password }}"
+        groups: "{{ item.groups }}"
+        shell: "{{ item.shell }}"
+        create_home: "{{ item.create_home }}"
+      loop: "{{ users }}"
+
+ 
+
+

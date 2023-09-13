@@ -1,0 +1,61 @@
+--- ##install httpd 
+- name: install httpd using vars loops
+  become: true
+  hosts: all
+  tasks:
+  - name: install httpd
+    package:
+      name: httpd
+      state: present
+  - name: uninstall httpd
+    package:
+      name: httpd
+      state: absent
+  - name: Start and Enable httpd Service
+    service:
+      name: httpd
+      state: started
+      enabled: yes
+  - name: Start and Enable httpd Service
+    service:
+      name: httpd
+      state: stopped
+
+---
+- name: install httpd using vars loops
+  become: true
+  hosts: all
+  tasks:
+  - name: install multiple packages
+    yum:
+      name: "{{ packages }}"
+      state: installed
+    vars:
+      packages:
+      - httpd
+      - nginx
+
+---
+- name: install httpd using vars loops
+  become: true
+  hosts: all
+  tasks:
+  - name: install multiple packages
+    yum:
+      name: ['git', 'make', 'telnet', 'gzip', 'tree']
+      state: installed
+
+---
+- name: install httpd using vars loops
+  become: true
+  hosts: all
+  tasks:
+  - name: install multiple packages
+    yum:
+      name: "{{ items }}"
+      state: installed
+    with_items: 
+      - git 
+      - make 
+      - telnet 
+      - wget

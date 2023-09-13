@@ -1,0 +1,48 @@
+---    ##add this into cronjob every minutes it will watch schdule the time  
+- name: Monitor CPU and Disk
+  hosts: your_target_host
+  gather_facts: false
+
+  vars:
+    slack_webhook_url: "https://hooks.slack.com/services/your_slack_webhook_url"
+    cpu_threshold: 70
+    disk_threshold: 80
+    memory_threshold: 80
+
+  tasks:
+    - name: Check CPU utilization
+      shell: "top -bn1 | grep 'Cpu(s)' | awk '{print $2 + $4}'"
+      register: cpu_output
+
+    - name: Send Slack notification - CPU Utilization
+      slack:
+        msg: "CPU utilization is {{ cpu_output.stdout }}%"
+        webhook_url: "{{ slack_webhook_url }}"
+        channel: "anji"
+        validate_certs: false
+      when: cpu_output.stdout | int > cpu_threshold
+
+    - name: Check disk usage
+      shell: "df -h --output=pcent /dev/xvda1 | tail -n1"
+      register: disk_output
+
+    - name: Send Slack notification - Disk Usage
+      slack:
+        msg: "Disk /dev/xvda1 usage: {{ disk_output.stdout }}"
+        webhook_url: "{{ slack_webhook_url }}"
+        channel: "anji"
+        validate_certs: false
+      when: disk_output.stdout | int > disk_threshold
+
+    - name: Check memory usage
+      shell: "free -m | awk '/^Mem:/{print $3/$2 * 100}'"
+      register: memory_output
+
+    - name: Send Slack notification - Memory Usage
+      slack:
+        msg: "Memory usage is {{ memory_output.stdout }}%"
+        webhook_url: "{{ slack_webhook_url }}"
+        channel: "anji"
+        validate_certs: false
+      when: memory_output.stdout | int > memory_threshold
+

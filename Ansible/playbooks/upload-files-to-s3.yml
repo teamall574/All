@@ -1,0 +1,29 @@
+---
+- name: Send Old Log Files to S3 Bucket
+  hosts: your_target_host
+  gather_facts: false
+
+  vars:
+    aws_access_key: YOUR_AWS_ACCESS_KEY
+    aws_secret_key: YOUR_AWS_SECRET_KEY
+    s3_bucket: your_s3_bucket_name
+    log_files_path: /path/to/log/files
+    days_threshold: 30
+
+  tasks:
+    - name: Find old log files
+      find:
+        paths: "{{ log_files_path }}"
+        file_type: file
+        age: "{{ days_threshold }}d"
+      register: old_log_files
+
+    - name: Upload old log files to S3
+      s3:
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        bucket: "{{ s3_bucket }}"
+        object: "logs/{{ inventory_hostname }}/{{ item.path }}"
+        src: "{{ item.path }}"
+        mode: put
+      loop: "{{ old_log_files.files }}"

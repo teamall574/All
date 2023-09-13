@@ -1,0 +1,1 @@
+{"Modules":[{"Key":"prod-Env","Source":"./modules/basic_infra","Dir":"modules/basic_infra"},{"Key":"","Source":"","Dir":"."},{"Key":"Testing-Env","Source":"./modules/basic_infra","Dir":"modules/basic_infra"},{"Key":"dev-Env","Source":"./modules/basic_infra","Dir":"modules/basic_infra"}]}

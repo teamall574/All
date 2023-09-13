@@ -1,0 +1,19 @@
+---
+- name: Clone Git Repository and Build Dockerfile
+  hosts: remote_servers
+  become: true
+
+  tasks:
+    - name: Clone the Git repository
+      git:
+        repo: <git_repo_url>
+        dest: /path/to/destination/folder
+        version: master # Replace with the desired branch or tag
+        update: yes
+      tags: download git repository
+
+    - name: Build Docker image
+      command: docker build -t your_docker_image_name:latest <docker_build_dir>
+      args:
+        chdir: /path/to/destination/folder
+      tags: building docker image

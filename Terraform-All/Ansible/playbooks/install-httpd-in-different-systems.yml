@@ -1,0 +1,65 @@
+---
+- name: Install httpd on Ubuntu and RHEL Servers
+  hosts: ubuntu_servers:rhel_servers
+  gather_facts: false
+  become: true
+
+  tasks:
+    - name: Install httpd on Ubuntu
+      when: ansible_distribution == 'Ubuntu'
+      apt:
+        name: apache2
+        state: present
+        update_cache: yes   ##it will update the apache2
+
+    - name: Install httpd on RHEL
+      when: ansible_distribution == 'RedHat'
+      yum:
+        name: httpd
+        state: present
+
+    - name: Start and Enable httpd Service
+      service:
+        name: "{{ 'apache2' if ansible_distribution == 'Ubuntu' else 'httpd' }}"
+        state: started
+        enabled: yes
+############################################################################
+
+# install_and_configure_httpd.yml
+---
+- name: Install httpd on Ubuntu and RHEL Servers and Configure HTML
+  hosts: ubuntu_servers:rhel_servers
+  become: true
+
+  tasks:
+    - name: Install httpd on Ubuntu
+      when: ansible_distribution == 'Ubuntu'
+      apt:
+        name: apache2
+        state: present
+        update_cache: yes   ##it will update the apache2
+
+    - name: Install httpd on RHEL
+      when: ansible_distribution == 'RedHat'
+      yum:
+        name: httpd
+        state: present
+
+    - name: Start and Enable httpd Service
+      service:
+        name: "{{ 'apache2' if ansible_distribution == 'Ubuntu' else 'httpd' }}"
+        state: started
+        enabled: yes
+
+    - name: Copy index.html to HTML folder
+      copy:
+        src: /path/to/index.html
+        dest: "{{ '/var/www/html/index.html' if ansible_distribution == 'Ubuntu' else '/var/www/html/index.html' }}"
+      notify: Restart httpd
+      when: ansible_distribution in ['Ubuntu', 'RedHat']
+
+  handlers:
+    - name: Restart httpd
+      service:
+        name: "{{ 'apache2' if ansible_distribution == 'Ubuntu' else 'httpd' }}"
+        state: restarted

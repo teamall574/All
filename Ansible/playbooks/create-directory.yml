@@ -1,0 +1,48 @@
+---
+- name: creating directory in remote servers
+  hosts: all
+  become: true
+  tasks:
+    - name: create a directory
+      file:
+        path: /root/home/anji
+        state: directory
+    - name: copy files into remote servers
+      copy:
+        src: /home/sampi/anji.txt
+        dest: /root/home/anji/anji.txt
+        owner: ansadmin
+        group: ansadmin
+        mode: u+rw,g-wx,o-rwx
+
+---  ##create the file in and give permission to users
+- name: create file in appserevers
+  hosts: all
+  become: true
+  tasks:
+    - name: create the file and set properties
+      file:  ##if you use become need to give the permission because it created root user if you not given become true then it will created the ansadmin or anji user
+        path: /home/web.txt
+        owner: anji 
+        group: anji 
+        mode: "0755"
+        state: touch  ##it is used to create the file
+
+--- ##one more way 
+- name: Create 'anji.txt' File and Set Permissions
+  hosts: servers
+  become: true
+
+  tasks:
+    - name: Create 'anji.txt' File
+      file:
+        path: /path/to/anji.txt
+        state: touch
+        mode: "0755"
+
+    - name: Give 'anji' User Execute Permissions on 'anji.txt'
+      file:
+        path: /path/to/anji.txt
+        mode: "0755"
+        owner: anji
+        group: anji
