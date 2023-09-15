@@ -1,0 +1,20 @@
+---
+- name: Calculate Total Size of '.mp3' Files
+  hosts: your_target_host
+  gather_facts: no  # Disable gathering facts to speed up the playbook
+
+  tasks:
+    - name: Find '.mp3' Files
+      find:
+        paths: /path/to/search  # Replace with the directory you want to search
+        recurse: yes
+        patterns: "*.mp3"
+      register: mp3_files
+
+    - name: Calculate Total Size
+      set_fact:
+        total_size: "{{ mp3_files.files | map(attribute='size') | sum }}"
+
+    - name: Display Total Size of '.mp3' Files
+      debug:
+        var: total_size
