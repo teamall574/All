@@ -1,0 +1,15 @@
+---
+- name: Search for .txt Files
+  hosts: your_target_host
+  gather_facts: no  # Disable gathering facts to speed up the playbook
+
+  tasks:
+    - name: Find .txt Files
+      find:
+        paths: /path/to/search  # Replace with the directory where you want to start the search
+        patterns: "*.txt"
+      register: txt_files
+
+    - name: Display Found .txt Files
+      debug:
+        var: txt_files.files
