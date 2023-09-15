@@ -1,0 +1,20 @@
+---
+- name: Find and Delete Old Log Files
+  hosts: your_target_host
+  gather_facts: no  # Disable gathering facts to speed up the playbook
+
+  tasks:
+    - name: Find Old Log Files
+      find:
+        paths: /path/to/search  # Replace with the directory where you want to start the search
+        patterns: "*.log"
+        age: 7d
+      register: old_log_files
+      become: yes  # Run the task with sudo privileges
+
+    - name: Delete Old Log Files
+      file:
+        path: "{{ item.path }}"
+        state: absent
+      with_items: "{{ old_log_files.files }}"
+      become: yes  # Run the task with sudo privileges
