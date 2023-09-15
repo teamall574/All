@@ -4,6 +4,15 @@
   become: true
   tasks:
   - user: name=anji  ##it is used to create the user
+ ---
+-	name: Change directory permissions 
+  hosts: webservers
+  become: yes 
+  tasks:
+  -	name: Change permissions of /var/www and its contents to 755 file:
+    path: /var/www 
+    mode: '0755' 
+    recurse: yes
 
 ---  
 - name: Create Users with Passwords
