@@ -1,0 +1,44 @@
+<VirtualHost *:80>
+    ServerName {{ server_name }}
+    ServerAdmin {{ server_admin }}
+    DocumentRoot {{ document_root }}
+
+    ErrorLog ${APACHE_LOG_DIR}/{{ server_name }}_error.log
+    CustomLog ${APACHE_LOG_DIR}/{{ server_name }}_access.log combined
+
+    <Directory {{ document_root }}>
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
+
+
+---
+- name: Configure Apache VirtualHost
+  hosts: your_target_host
+  become: yes  # Run tasks with sudo privileges
+
+  vars:
+    server_name: example.com
+    server_admin: webmaster@example.com
+    document_root: /var/www/html
+
+  tasks:
+    - name: Create Apache VirtualHost Configuration
+      template:
+        src: my_apache_template.conf.j2
+        dest: /etc/apache2/sites-available/{{ server_name }}.conf
+      notify: Reload Apache
+
+    - name: Enable Apache VirtualHost
+      apache2_module:
+        state: present
+        name: vhost_alias
+      notify: Reload Apache
+
+  handlers:
+    - name: Reload Apache
+      service:
+        name: apache2
+        state: reloaded
