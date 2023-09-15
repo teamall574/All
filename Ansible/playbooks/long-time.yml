@@ -1,0 +1,19 @@
+---
+- name: Run Long-Running Command
+  hosts: your_target_hosts
+  become: yes  # Run tasks with sudo privileges
+
+  tasks:
+    - name: Start Long-Running Command
+      command: /path/to/your/long_running_script.sh
+      async: 3600  # Set the timeout for the async task (in seconds)
+      poll: 0      # Set poll to 0 to start the task and immediately move to the next task
+      register: long_running_command_result
+      - name: Check Long-Running Task Status
+  async_status:
+    jid: "{{ long_running_command_result.ansible_job_id }}"
+  register: job_result
+  until: job_result.finished
+  retries: 3600  # Number of retries (adjust as needed)
+  delay: 10      # Delay between retries (in seconds)
+
