@@ -1,0 +1,46 @@
+  - name: install package
+    yum: 
+      name: httpd
+      state: installed
+    when: ansible_os_family == "RedHat"
+    notify: start apache
+  - name: install apache2
+    apt:
+      name: apache2
+      state: present
+    when: ansible_os_family == "Debian"
+  - name: ensure the default apache port is 8081
+    lineinfile:
+      path: /etc/httpd/conf/httpd.conf
+      regexp: '^Listen'
+      insertafter: '^#Listen'
+      line: Listen 8081
+    when: ansible_os_family == "RedHat"
+    notify: restart apache
+
+  - name: ensure the default apache port is 8081 on ubuntu
+    lineinfile: 
+      path: /etc/apache2/ports.conf
+      regexp: '^Listen'
+      insertafter: '^#Listen'
+      line: Listen 8081
+    when: ansible_os_family == "Debian"
+    notify: restart apache2
+  handlers:
+  - name: start apache
+    service:
+      name: httpd
+      state: started
+  - name: start apache2
+    service:
+      name: apache2
+      state: started
+  - name: restart apache
+    service: 
+      name: httpd
+      state: restarted
+
+  - name: restart apache2
+    service: 
+      name: apache2
+      state: restarted
