@@ -1,0 +1,27 @@
+---
+- name: Update Packages on Debian/Ubuntu
+  hosts: your_target_hosts
+  become: yes  # Run tasks with sudo privileges
+
+  tasks:
+    - name: Update Package Cache
+      apt:
+        update_cache: yes
+
+    - name: Upgrade Packages
+      apt:
+        upgrade: yes
+        autoremove: yes
+        autoclean: yes
+        dpkg_options: "force-confdef,force-confold"
+
+---
+- name: Update Packages on Red Hat/CentOS
+  hosts: your_target_hosts
+  become: yes  # Run tasks with sudo privileges
+
+  tasks:
+    - name: Update Package Cache
+      yum:
+        name: '*'
+        state: latest
