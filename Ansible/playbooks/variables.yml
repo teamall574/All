@@ -1,0 +1,10 @@
+---
+-	name: Playbook with variables 
+  hosts: all
+  vars:
+    webserver_package: nginx 
+  tasks:
+  -	name: Install web server 
+    apt:
+      name: "{{ webserver_package }}" 
+      state: present
