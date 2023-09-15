@@ -1,0 +1,16 @@
+---
+- name: Find Symbolic Links
+  hosts: your_target_host
+  gather_facts: no  # Disable gathering facts to speed up the playbook
+
+  tasks:
+    - name: Find Symbolic Links
+      find:
+        paths: /path/to/search  # Replace with the directory where you want to start the search
+        recurse: yes
+        file_type: link
+      register: found_links
+
+    - name: Display Found Symbolic Links
+      debug:
+        var: found_links.files
