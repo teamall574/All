@@ -1,0 +1,37 @@
+# sshd_config.j2
+
+# Your SSH server configuration settings go here
+Port {{ ssh_port }}
+PermitRootLogin {{ permit_root_login }}
+PasswordAuthentication {{ password_authentication }}
+# ... other settings ...
+
+---
+- name: Ensure SSHD Configurations Are Consistent
+  hosts: your_target_hosts
+  become: yes  # Run tasks with sudo privileges
+
+  tasks:
+    - name: Copy sshd_config Template
+      template:
+        src: /path/to/sshd_config.j2  # Path to your template file
+        dest: /etc/ssh/sshd_config
+        owner: root
+        group: root
+        mode: 0644
+      notify: Restart SSH Service
+
+    - name: Check SSHD Config Changes
+      command: diff -q /etc/ssh/sshd_config /etc/ssh/sshd_config.old
+      register: sshd_config_diff
+      changed_when: sshd_config_diff.rc != 0
+      ignore_errors: yes
+      when: sshd_config_diff.rc is defined
+
+  handlers:
+    - name: Restart SSH Service
+      service:
+        name: sshd
+        state: restarted
+
+sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.old
