@@ -1,0 +1,16 @@
+---
+- name: Recursively Search for a Specific File
+  hosts: your_target_host
+  gather_facts: no  # Disable gathering facts to speed up the playbook
+
+  tasks:
+    - name: Find Specific File
+      find:
+        paths: /path/to/search  # Replace with the directory where you want to start the search
+        recurse: yes
+        patterns: "your_specific_file.ext"  # Replace with the file name you're searching for
+      register: found_files
+
+    - name: Display Found Files
+      debug:
+        var: found_files.files
