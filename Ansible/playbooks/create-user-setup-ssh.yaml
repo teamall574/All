@@ -1,0 +1,13 @@
+---
+-	name: Add user and setup SSH keys 
+  hosts: all
+  become: yes 
+  tasks:
+  -	name: Add the user 
+    user:
+      name: myuser 
+      state: present
+  -	name: Setup SSH keys 
+    authorized_key: 
+    user: myuser
+     key: "{{ lookup('file', '/path/to/public_key') }}"
