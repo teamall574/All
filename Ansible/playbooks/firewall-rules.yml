@@ -1,0 +1,38 @@
+---
+- name: Manage Firewall Rules
+  hosts: your_target_hosts
+  become: yes  # Run tasks with sudo privileges
+
+  tasks:
+    - name: Install UFW
+      apt:
+        name: ufw
+        state: present
+
+    - name: Ensure UFW is enabled
+      command: ufw --force enable
+
+    - name: Allow SSH
+      ufw:
+        rule: allow
+        name: OpenSSH
+        port: 22
+
+    - name: Allow HTTP
+      ufw:
+        rule: allow
+        name: HTTP
+        port: 80
+
+    - name: Allow HTTPS
+      ufw:
+        rule: allow
+        name: HTTPS
+        port: 443
+
+    - name: Deny Incoming Traffic
+      ufw:
+        rule: deny
+
+    - name: Enable UFW
+      command: ufw --force enable
