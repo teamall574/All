@@ -1,0 +1,27 @@
+---
+
+-	name: Deploy Nginx web server 
+  hosts: webservers
+  ignore_errors: true
+  become: yes tasks:
+  -	name: Install Nginx 
+    apt:
+      name: nginx 
+      state: present
+  -	name: Ensure Nginx is running 
+    service:
+      name: nginx 
+        state: started 
+        enabled: yes
+
+--------------------conditions--------------
+
+---
+-	name: Conditional execution playbook 
+  hosts: all
+  tasks:
+  -	name: Install Nginx on Debian systems 
+    apt:
+      name: nginx 
+      state: present
+      when: ansible_os_family == "Debian"
