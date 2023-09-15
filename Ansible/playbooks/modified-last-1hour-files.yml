@@ -1,0 +1,17 @@
+---
+- name: Find Files Modified in the Last Hour
+  hosts: your_target_host
+  gather_facts: no  # Disable gathering facts to speed up the playbook
+
+  tasks:
+    - name: Find Files Modified in the Last Hour
+      find:
+        paths: /path/to/search  # Replace with the directory you want to search
+        recurse: yes
+        age: -1h  # Specifies the time frame (last hour)
+        age_stamp: mtime
+      register: found_files
+
+    - name: Display Found Files
+      debug:
+        var: found_files.files
