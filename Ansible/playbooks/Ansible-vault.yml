@@ -1,0 +1,25 @@
+# secrets.yml
+
+api_key: !vault |
+    $ANSIBLE_VAULT;1.1;AES256
+    66306262613862383161376131646436626239613532363536613233313361623631656265636565
+    3661393363613764373665356566623832656634336131330a356363323937653066363565656363
+    35383566303838303333626632626263396465656666336630373839636430636335626663626334
+    3961396137346237340a633935363066323735623961316231366339636362653332376237336137
+    36376135366636363432623635356661313161356631313436653365353066306333
+
+ansible-vault encrypt secrets.yml
+
+---
+- name: Deploy Web Application with API Key
+  hosts: your_target_hosts
+  become: yes  # Run tasks with sudo privileges
+
+  tasks:
+    - name: Include Encrypted Secrets
+      include_vars:
+        file: secrets.yml
+        name: secrets
+
+    - name: Deploy Web Application
+      # Your tasks to deploy the web application here
