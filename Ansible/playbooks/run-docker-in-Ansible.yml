@@ -1,0 +1,31 @@
+---
+- name: Deploy Docker Container and Open Port 80
+  hosts: your_target_hosts
+  become: yes  # Run tasks with sudo privileges
+
+  tasks:
+    - name: Pull Docker Image
+      docker_image:
+        name: your_image_name:tag
+        source: pull
+
+    - name: Run Docker Container
+      docker_container:
+        name: your_container_name
+        image: your_image_name:tag
+        state: started
+        ports:
+          - "80:80"
+
+    - name: Open Port 80 in Firewall (UFW example)
+      ufw:
+        rule: allow
+        port: 80
+        proto: tcp
+      notify: Reload UFW
+
+  handlers:
+    - name: Reload UFW
+      service:
+        name: ufw
+        state: reloaded
