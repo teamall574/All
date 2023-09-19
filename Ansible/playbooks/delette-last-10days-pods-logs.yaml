@@ -1,0 +1,18 @@
+---
+- name: Delete old logs from a specific pod
+  hosts: localhost
+  tasks:
+    - name: Define variables
+      set_fact:
+        pod_name: "your-pod-name"
+        container_name: "your-container-name"
+        logs_dir: "/path/to/logs/directory"  # Replace with the actual path
+
+    - name: Calculate the timestamp for 10 days ago
+      shell: date -d "10 days ago" +%s
+      register: ten_days_ago
+      changed_when: false
+
+    - name: Delete old logs
+      command: kubectl exec {{ pod_name }} -c {{ container_name }} -- find {{ logs_dir }} -type f -mtime +9 -exec rm {} \;
+      ignore_errors: yes  # Ignore errors if no old logs are found
