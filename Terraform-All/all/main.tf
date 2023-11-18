@@ -1,9 +1,12 @@
 terraform {
   required_providers {
-    mycloud = {
-      source  = "mycorp/mycloud"
-      version = "~> 1.0"
-      configuration_aliases = [ mycloud.alternate ]
+    aws = {
+      source = "hashicorp/aws"
+      version = "3.47.0"
+      version = ">=3.47.0"   ##it will use latest version
+      version = "<=3.47.0"   ##it will use 3.47.0 below version
+      version = "~>3.47.0"   ##any one in the range 3.47.99 something it will not go or work this up versions 3.48.0 
+
     }
   }
 }
