@@ -167,6 +167,7 @@ resource "aws_eks_cluster" "eks" {
   role_arn = aws_iam_role.master.arn
 
   vpc_config {
+    vpc_id     = aws_vpc.dpp-vpc.id
     subnet_ids = [var.subnet_ids[0],var.subnet_ids[1]]
   }
   
