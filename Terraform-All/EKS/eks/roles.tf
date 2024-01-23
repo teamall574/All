@@ -178,7 +178,7 @@ resource "aws_eks_cluster" "eks" {
     #aws_subnet.pub_sub1,
     #aws_subnet.pub_sub2,
   ]
-
+ kubernetes_version = "1.18"
 }
 #################################################################################################################
 
