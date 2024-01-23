@@ -69,7 +69,52 @@ resource "aws_iam_policy" "autoscaler" {
       ],
       "Effect": "Allow",
       "Resource": "*"
-    }
+    },
+    {
+            "Effect": "Allow",
+            "Action": [
+                "elasticloadbalancing:Describe*",
+                "elasticloadbalancing:CreateLoadBalancer",
+                "elasticloadbalancing:DeleteLoadBalancer",
+                "elasticloadbalancing:ModifyLoadBalancerAttributes",
+                "elasticloadbalancing:RegisterInstancesWithLoadBalancer",
+                "elasticloadbalancing:DeregisterInstancesFromLoadBalancer",
+                "elasticloadbalancing:CreateTargetGroup",
+                "elasticloadbalancing:DeleteTargetGroup",
+                "elasticloadbalancing:ModifyTargetGroup",
+                "elasticloadbalancing:SetWebAcl",
+                "elasticloadbalancing:ModifyListener",
+                "elasticloadbalancing:CreateListener",
+                "elasticloadbalancing:DeleteListener"
+            ],
+            "Resource": "*"
+        },
+    {
+            "Effect": "Allow",
+            "Action": [
+                "cloudwatch:PutMetricData",
+                "cloudwatch:GetMetricStatistics",
+                "cloudwatch:ListMetrics"
+            ],
+            "Resource": "*"
+        },
+   {
+            "Effect": "Allow",
+            "Action": [
+                "route53:ChangeResourceRecordSets",
+                "route53:GetChange",
+                "route53:ListResourceRecordSets",
+                "route53:ListHostedZones",
+                "route53:GetHostedZone",
+                "route53:ChangeTagsForResource"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": "cloudformation:*",
+            "Resource": "*"
+        }
   ]
 }
 EOF
